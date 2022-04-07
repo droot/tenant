@@ -2,16 +2,19 @@ apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
   name: update-rolebinding
+  annotations:
+    config.kubernetes.io/local-config: "true"
 replacements:
-- source: 
-    kind: Pod
-    name: my-pod
-    fieldPath: spec
+- source:
+    kind: ConfigMap
+    name: kptfile.kpt.dev
+    fieldPath: data.name
   targets:
   - select:
-      name: hello
-      kind: Job
-    fieldPaths: 
-    - spec.template.spec
+      name: app-admin-binding
+      kind: RoleBinding
+    fieldPaths:
+    - subjects.[kind=Group].name
     options:
-      create: true
+      delimiter: '.'
+      index: 0
